@@ -1,0 +1,30 @@
+# Dependencies and build artifacts (recreated inside the image)
+node_modules
+dist
+coverage
+*.tsbuildinfo
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Version control and editor config
+.git
+.gitignore
+.vscode
+.idea
+*.swp
+
+# Docs and tooling not needed to build the image
+README.md
+postman
+Makefile
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# OS / logs
+.DS_Store
+Thumbs.db
+*.log

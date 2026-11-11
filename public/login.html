@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="es" class="h-full">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Iniciar sesión — API Demo</title>
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/vanilla-sonner@0.5.2/dist/vanilla-sonner.min.css"
+		/>
+		<script src="https://cdn.tailwindcss.com"></script>
+		<style>
+			[x-cloak] {
+				display: none !important;
+			}
+		</style>
+	</head>
+	<body class="h-full bg-zinc-50 font-sans antialiased text-zinc-900">
+		<ol
+			id="sonner-toast-container"
+			position="top-right"
+			duration="5000"
+			max-toasts="3"
+			theme="light"
+		></ol>
+		<main x-data="login" x-cloak class="mx-auto max-w-sm px-4 py-16">
+			<h1
+				class="text-3xl font-semibold tracking-tight"
+				x-text="mode === 'login' ? 'Iniciar sesión' : 'Crear cuenta'"
+			></h1>
+			<p class="mt-2 text-sm text-zinc-500">
+				Necesitas una sesión para administrar estudiantes y mascotas.
+			</p>
+
+			<form class="mt-8 space-y-4" novalidate @submit.prevent="submit()">
+				<div x-show="mode === 'register'">
+					<label for="name" class="mb-1 block text-sm font-medium text-zinc-700"
+						>Nombre</label
+					>
+					<input
+						id="name"
+						type="text"
+						x-model="form.name"
+						autocomplete="name"
+						placeholder="Juan Pérez"
+						:class="errors.name
+							? 'border-red-400 focus:border-red-500 focus:ring-red-500'
+							: 'border-zinc-300 focus:border-zinc-900 focus:ring-zinc-900'"
+						class="w-full rounded-lg border bg-white px-3 py-2 text-sm outline-none transition focus:ring-1"
+					/>
+					<p x-show="errors.name" x-text="errors.name" class="mt-1 text-xs text-red-600"></p>
+				</div>
+
+				<div>
+					<label for="email" class="mb-1 block text-sm font-medium text-zinc-700"
+						>Correo electrónico</label
+					>
+					<input
+						id="email"
+						type="email"
+						x-model="form.email"
+						autocomplete="email"
+						placeholder="juan@example.com"
+						:class="errors.email
+							? 'border-red-400 focus:border-red-500 focus:ring-red-500'
+							: 'border-zinc-300 focus:border-zinc-900 focus:ring-zinc-900'"
+						class="w-full rounded-lg border bg-white px-3 py-2 text-sm outline-none transition focus:ring-1"
+					/>
+					<p x-show="errors.email" x-text="errors.email" class="mt-1 text-xs text-red-600"></p>
+				</div>
+
+				<div>
+					<label for="password" class="mb-1 block text-sm font-medium text-zinc-700"
+						>Contraseña</label
+					>
+					<input
+						id="password"
+						type="password"
+						x-model="form.password"
+						:autocomplete="mode === 'login' ? 'current-password' : 'new-password'"
+						:class="errors.password
+							? 'border-red-400 focus:border-red-500 focus:ring-red-500'
+							: 'border-zinc-300 focus:border-zinc-900 focus:ring-zinc-900'"
+						class="w-full rounded-lg border bg-white px-3 py-2 text-sm outline-none transition focus:ring-1"
+					/>
+					<p
+						x-show="errors.password"
+						x-text="errors.password"
+						class="mt-1 text-xs text-red-600"
+					></p>
+				</div>
+
+				<button
+					type="submit"
+					:disabled="busy"
+					class="w-full rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-700 disabled:opacity-50"
+					x-text="mode === 'login' ? 'Entrar' : 'Crear cuenta'"
+				></button>
+			</form>
+
+			<p class="mt-6 text-center text-sm text-zinc-500">
+				<span x-text="mode === 'login' ? '¿No tienes cuenta?' : '¿Ya tienes cuenta?'"></span>
+				<button
+					type="button"
+					@click="toggleMode()"
+					class="font-medium text-zinc-900 underline-offset-2 hover:underline"
+					x-text="mode === 'login' ? 'Crear una' : 'Inicia sesión'"
+				></button>
+			</p>
+		</main>
+
+		<script type="module" src="/js/login.js"></script>
+	</body>
+</html>

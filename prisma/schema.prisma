@@ -1,0 +1,65 @@
+// Esquema de la base de datos. Después de modificarlo, crea una migración con:
+//   pnpm run prisma:migrate --name descripcion_del_cambio
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Student {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @db.VarChar(100)
+  username  String   @unique @db.VarChar(30)
+  email     String   @unique @db.VarChar(255)
+  age       Int
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  pets Pet[]
+
+  @@map("students")
+}
+
+model Pet {
+  id        String   @id @default(uuid()) @db.Uuid
+  studentId String   @map("student_id") @db.Uuid
+  name      String   @db.VarChar(50)
+  species   String   @db.VarChar(50)
+  age       Int?
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  // Al eliminar un estudiante, Postgres elimina sus mascotas (ON DELETE CASCADE).
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, name])
+  @@map("pets")
+}
+
+// Usuarios que pueden iniciar sesión en la API (no confundir con Student,
+// que es el recurso del CRUD).
+model User {
+  id           String   @id @default(uuid()) @db.Uuid
+  name         String   @db.VarChar(100)
+  email        String   @unique @db.VarChar(255)
+  passwordHash String   @map("password_hash") @db.VarChar(255)
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@map("users")
+}
+
+// Tabla que usa connect-pg-simple para guardar las sesiones. Se declara aquí
+// para que forme parte de las migraciones; la aplicación no la consulta con Prisma.
+model UserSession {
+  sid    String   @id @db.VarChar
+  sess   Json     @db.Json
+  expire DateTime @db.Timestamp(6)
+
+  @@index([expire], map: "IDX_session_expire")
+  @@map("user_sessions")
+}

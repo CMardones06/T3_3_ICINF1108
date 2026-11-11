@@ -1,0 +1,51 @@
+name: icinf1108-templates2026
+
+services:
+  api:
+    build:
+      context: .
+      target: dev
+    image: icinf1108-templates2026:dev
+    container_name: icinf1108-api-dev
+    init: true
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    environment:
+      NODE_ENV: development
+      TSC_WATCHFILE: UsePollingWatchFile
+      TSC_WATCHDIRECTORY: UsePollingWatchDirectory
+      # Dentro de la red de Compose, Postgres se llama "db" (el nombre del servicio)
+      DATABASE_URL: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-icinf1108}
+      SESSION_SECRET: ${SESSION_SECRET:-cambia-este-secreto-en-produccion}
+    volumes:
+      # Bind-mount the source for hot reload...
+      - .:/app
+      # ...but keep the image's node_modules
+      - /app/node_modules
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: postgres:17-alpine
+    container_name: icinf1108-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-icinf1108}
+    ports:
+      # Expuesto al host para conectarse con DBeaver/psql o correr la API sin Docker
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      # Volumen nombrado: los datos sobreviven a `docker compose down`
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  pgdata:

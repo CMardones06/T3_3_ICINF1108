@@ -1,0 +1,42 @@
+export class ApiResponse<T = unknown> {
+	constructor(
+		public code: number,
+		public success: boolean,
+		public message: string,
+		public timestamp: string,
+		public data?: T | null,
+		public error?: unknown,
+		public errors?: ValidationErrors | null,
+	) {}
+
+	static is(payload: unknown): payload is ApiResponse<unknown> {
+		if (!payload || typeof payload !== "object") return false
+
+		const r = payload as Record<string, unknown>
+
+		return (
+			typeof r.code === "number" &&
+			typeof r.success === "boolean" &&
+			typeof r.message === "string" &&
+			typeof r.timestamp === "string"
+		)
+	}
+
+	static genericError(code: number, message: string): ApiResponse<never> {
+		return new ApiResponse<never>(code, false, message, new Date().toISOString())
+	}
+
+	static from(payload: ApiResponse<unknown>): ApiResponse<unknown> {
+		return new ApiResponse<unknown>(
+			payload.code,
+			payload.success,
+			payload.message,
+			payload.timestamp,
+			payload.data,
+			payload.error,
+			payload.errors,
+		)
+	}
+}
+
+export type ValidationErrors = Record<string, { message: string }>
