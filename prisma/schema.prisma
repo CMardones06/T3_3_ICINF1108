@@ -63,3 +63,14 @@ model UserSession {
   @@index([expire], map: "IDX_session_expire")
   @@map("user_sessions")
 }
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  jti       String   @unique @db.VarChar
+  userId    String   @db.VarChar
+  isUsed    Boolean  @default(false)
+  expiresAt DateTime @db.Timestamp(6)
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+
+  @@index([jti], map: "IDX_password_reset_jti")
+  @@map("password_reset_tokens")
+}
