@@ -32,3 +32,9 @@ export class LoginDto {
 	@IsNotEmpty({ message: "La contraseña no puede estar vacía" })
 	password!: string
 }
+
+export class ForgotPasswordDto {
+	@IsEmail({}, { message: "El correo electrónico no es válido" })
+	@IsNotEmpty({ message: "El correo electrónico no puede estar vacío" })
+	email!: string
+}

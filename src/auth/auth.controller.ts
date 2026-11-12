@@ -13,7 +13,7 @@ import { ApiCookieAuth } from "@nestjs/swagger"
 import type { Request, Response } from "express"
 
 import { AuthService } from "@/auth/auth.service"
-import { LoginDto, RegisterDto } from "@/auth/auth.dtos"
+import { ForgotPasswordDto, LoginDto, RegisterDto } from "@/auth/auth.dtos"
 import { SessionGuard } from "@/auth/session.guard"
 import { destroySession, startSession } from "@/auth/session"
 import { SESSION_COOKIE_NAME } from "@/shared/config"
@@ -36,6 +36,16 @@ export class AuthController {
 		const user = await this.authService.login(body)
 		await startSession(request, user.id)
 		return user
+	}
+
+	@Post("password/forgot")
+	@HttpCode(202)
+	public async forgotPassword(@Body() body: ForgotPasswordDto) {
+		await this.authService.requestPasswordReset(body.email)
+
+		return {
+			message: "Si el correo está registrado, recibirás un enlace de recuperación.",
+		}
 	}
 
 	@Post("logout")
