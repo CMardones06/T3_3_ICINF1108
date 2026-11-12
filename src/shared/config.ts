@@ -15,6 +15,12 @@ export const config = {
 	sessionSecret: process.env.SESSION_SECRET ?? "cambia-este-secreto-en-produccion",
 	sessionMaxAgeMs: Number(process.env.SESSION_MAX_AGE_MS ?? 1000 * 60 * 60 * 8),
 
+	passwordResetJwtSecret: process.env.PASSWORD_RESET_JWT_SECRET,
+	passwordResetClientUrl: process.env.PASSWORD_RESET_CLIENT_URL,
+	passwordResetSimulateMail:
+		process.env.NODE_ENV === "development" &&
+		process.env.PASSWORD_RESET_SIMULATE_MAIL === "true",
+
 	// Solo debe ser `true` cuando la app se sirve por HTTPS.
 	sessionCookieSecure: process.env.SESSION_COOKIE_SECURE === "true",
 }
