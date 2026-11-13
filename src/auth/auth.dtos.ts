@@ -38,3 +38,15 @@ export class ForgotPasswordDto {
 	@IsNotEmpty({ message: "El correo electrónico no puede estar vacío" })
 	email!: string
 }
+
+export class ResetPasswordDto {
+    @IsString({ message: "El token debe ser un texto" })
+    @IsNotEmpty({ message: "El token de recuperación es obligatorio" })
+    reset_token!: string
+
+    @IsString({ message: "La contraseña debe ser un texto" })
+    @Length(8, 72, {
+        message: "La contraseña debe tener entre 8 y 72 caracteres",
+    })
+    new_password!: string
+} 
