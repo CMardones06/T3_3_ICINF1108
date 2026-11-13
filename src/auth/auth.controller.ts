@@ -13,7 +13,7 @@ import { ApiCookieAuth } from "@nestjs/swagger"
 import type { Request, Response } from "express"
 
 import { AuthService } from "@/auth/auth.service"
-import { ForgotPasswordDto, LoginDto, RegisterDto } from "@/auth/auth.dtos"
+import { ForgotPasswordDto, LoginDto, RegisterDto, ResetPasswordDto} from "@/auth/auth.dtos"
 import { SessionGuard } from "@/auth/session.guard"
 import { destroySession, startSession } from "@/auth/session"
 import { SESSION_COOKIE_NAME } from "@/shared/config"
@@ -56,6 +56,12 @@ export class AuthController {
 		return null
 	}
 
+	@Post("password/reset")
+    @HttpCode(204)
+    public async resetPassword(@Body() body: ResetPasswordDto): Promise<void> {
+        await this.authService.resetPassword(body.reset_token, body.new_password)
+    }
+	
 	@Get("me")
 	@ApiCookieAuth()
 	@UseGuards(SessionGuard)
